@@ -1,0 +1,22 @@
+@model IEnumerable<TaskManagementApp.Models.Task>
+
+<h2>Tasks</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Completed</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var task in Model)
+        {
+            <tr>
+                <td>@task.Title</td>
+                <td>@task.Description</td>
+                <td>@task.IsCompleted</td>
+            </tr>
+        }
+    </tbody>
+</table>
