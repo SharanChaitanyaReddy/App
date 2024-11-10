@@ -1,7 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TaskManagementApp.Models;
-using TaskManagementApp.Services;
 
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class TaskApiController : ControllerBase

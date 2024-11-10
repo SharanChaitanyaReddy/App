@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace AspNetCoreApp.Migrations
+namespace TaskManagementApp.Migrations
 {
     [DbContext(typeof(TaskDbContext))]
     partial class TaskDbContextModelSnapshot : ModelSnapshot

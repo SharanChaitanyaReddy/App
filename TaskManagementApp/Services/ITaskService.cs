@@ -1,4 +1,3 @@
-using TaskManagementApp.Models;
 using System.Collections.Generic;
 
 public interface ITaskService

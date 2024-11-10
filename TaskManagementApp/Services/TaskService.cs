@@ -1,20 +1,39 @@
-using TaskManagementApp.Data;
-using TaskManagementApp.Models;
 using System.Collections.Generic;
 using System.Linq;
-public class TaskService : ITaskService
+public class TaskService
 {
- private readonly TaskDbContext _context;
+ private readonly TaskRepository _taskRepository;
 
-    public TaskService(TaskDbContext context)
+    public TaskService(TaskRepository taskRepository)
     {
-        _context = context;
+        _taskRepository = taskRepository;
     }
 
-    public List<Task> GetAllTasks() => _context.Tasks.ToList();
-    public Task GetTaskById(int id) => _context.Tasks.Find(id);
-    public void AddTask(Task task) { _context.Tasks.Add(task); _context.SaveChanges(); }
-    public void UpdateTask(Task task) { _context.Tasks.Update(task); _context.SaveChanges(); }
-    public void DeleteTask(int id) { var task = GetTaskById(id); _context.Tasks.Remove(task); _context.SaveChanges(); }
+    public async Task<TaskItem> CreateTaskAsync(string title, string description, TaskPriority priority, DateTime dueDate)
+    {
+        var task = new TaskItem
+        {
+            Title = title,
+            Description = description,
+            Priority = priority,
+            Status = TaskStatus.ToDo,
+            DueDate = dueDate,
+            SubTasks = new List<SubTask>(),
+            Comments = new List<Comment>()
+        };
+        
+        return await _taskRepository.CreateTaskAsync(task);
+    }
+    
+    public async System.Threading.Tasks.Task AddCommentAsync(int taskId, string content, int userId)
+    {
+         await _taskRepository.AddCommentAsync(taskId, content, userId);
+    }
+    
+    public async System.Threading.Tasks.Task UpdateTaskStatusAsync(int taskId, TaskStatus newStatus, int userId)
+    {
+        await _taskRepository.UpdateTaskStatusAsync(taskId, newStatus, userId);
+    }
+
 
 }

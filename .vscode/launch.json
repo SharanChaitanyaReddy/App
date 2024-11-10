@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
     "configurations": [
+        
         {
             // Use IntelliSense to find out which attributes exist for C# debugging
             // Use hover for the description of the existing attributes
@@ -10,9 +11,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/AspNetCoreApp/bin/Debug/net8.0/AspNetCoreApp.dll",
+            "program": "${workspaceFolder}/TaskManagementApp/bin/Debug/net8.0/TaskManagementApp.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/AspNetCoreApp",
+            "cwd": "${workspaceFolder}/TaskManagementApp",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {

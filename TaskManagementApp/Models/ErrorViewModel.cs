@@ -1,4 +1,4 @@
-namespace AspNetCoreApp.Models;
+namespace TaskManagementApp.Models;
 
 public class ErrorViewModel
 {

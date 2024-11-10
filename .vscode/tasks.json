@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/AspNetCoreApp/AspNetCoreApp.csproj",
+                "${workspaceFolder}/AspNetCoreApp/TaskManagementApp.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/AspNetCoreApp/AspNetCoreApp.csproj",
+                "${workspaceFolder}/AspNetCoreApp/TaskManagementApp.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -33,7 +33,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/AspNetCoreApp/AspNetCoreApp.csproj"
+                "${workspaceFolder}/AspNetCoreApp/TaskManagementApp.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
