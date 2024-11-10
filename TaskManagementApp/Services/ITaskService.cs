@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using TaskManagementApp.Models;
 
 public interface ITaskService
 {
-    List<Task> GetAllTasks();
+    List<TaskItem> GetAllTasks();
     Task GetTaskById(int id);
-    void AddTask(Task task);
-    void UpdateTask(Task task);
+    void AddTask(TaskItem task);
+    void UpdateTask(TaskItem task);
     void DeleteTask(int id);
 }

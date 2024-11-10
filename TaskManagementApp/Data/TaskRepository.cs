@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TaskManagementApp.Models;
 
 public class TaskRepository
 {
@@ -11,24 +12,24 @@ public class TaskRepository
 
     public async Task<TaskItem> CreateTaskAsync(TaskItem task)
     {
-        _context.Tasks.Add(task);
+        _context.TaskItems.Add(task);
         await _context.SaveChangesAsync();
         return task;
     }
 
     public async System.Threading.Tasks.Task<TaskItem> GetTaskByIdAsync(int taskId)
     {
-        return await _context.Tasks
+        return await _context.TaskItems
             .Include(t => t.SubTasks)
             .Include(t => t.TaskLinks)
             .Include(t => t.Comments)
-            .Include(t => t.TaskHistories)
+            .Include(t => t.UserTaskHistories)
             .FirstOrDefaultAsync(t => t.Id == taskId);
     }
 
     public async System.Threading.Tasks.Task UpdateTaskStatusAsync(int taskId, TaskStatus newStatus, int userId)
     {
-        var task = await _context.Tasks.FindAsync(taskId);
+        var task = await _context.TaskItems.FindAsync(taskId);
         if (task != null)
         {
             var oldStatus = task.Status;

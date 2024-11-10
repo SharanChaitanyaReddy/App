@@ -19,7 +19,7 @@ public class TaskExpiryService
         var expiredTasks = _taskService.GetAllTasks().Where(t => t.ExpiryDate < DateTime.Now).ToList();
 
         foreach(var task in expiredTasks){
-            task.IsCompleted = true;
+            task.Status = TaskStatus.Done;
             _taskService.UpdateTask(task);
         }
     }

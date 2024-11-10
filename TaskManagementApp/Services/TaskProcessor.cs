@@ -1,4 +1,5 @@
 using  System.Threading.Tasks;
+using TaskManagementApp.Models;
 public class TaskProcessor{
     private readonly ITaskService _taskService;
 
@@ -10,18 +11,18 @@ public class TaskProcessor{
         var tasks = _taskService.GetAllTasks();
 
        // Gather high priority tasks
-        var highPriorityTasks  = tasks.Where(t => t.Priority == "High").ToList();
+        var highPriorityTasks  = tasks.Where(t => t.Priority == TaskPriority.High).ToList();
 
         
         await ProcessHighPriorityTasksAsync(highPriorityTasks);
 
-        var otherTasks = tasks.Where(t => t.Priority != "High").ToList();
+        var otherTasks = tasks.Where(t => t.Priority !=  TaskPriority.High).ToList();
 
         await ProcessHighPriorityTasksAsync(highPriorityTasks);
 
     }
 
-    private System.Threading.Tasks.Task ProcessHighPriorityTasksAsync(List<Task> tasks){
+    private System.Threading.Tasks.Task ProcessHighPriorityTasksAsync(List<TaskItem> tasks){
 
         return System.Threading.Tasks.Task.CompletedTask;
     }

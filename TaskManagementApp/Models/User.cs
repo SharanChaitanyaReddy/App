@@ -1,9 +1,12 @@
+namespace TaskManagementApp.Models;
+using System.ComponentModel.DataAnnotations;
 public class User
 {
+    [Key]
     public int Id { get; set; }
-    public string Username { get; set; }
-    public string Email { get; set; }
-    public ICollection<Task> AssignedTasks { get; set; }
-    public ICollection<Comment> Comments { get; set; }
-    public ICollection<UserTaskHistory> TaskHistories { get; set; }
+    public required string Username { get; set; }
+    public required string Email { get; set; }
+    public required ICollection<Task> AssignedTasks { get; set; }
+    public required ICollection<Comment> Comments { get; set; }
+    public required ICollection<UserTaskHistory> TaskHistories { get; set; }
 }
