@@ -27,7 +27,7 @@ public class TaskDbContext : DbContext
 
         // TaskItem -> TaskLinks relationship (to link tasks)
         modelBuilder.Entity<TaskLink>()
-            .HasOne(t => t.Task)
+            .HasOne(t => t.TaskItem)
             .WithMany(t => t.TaskLinks)
             .HasForeignKey(t => t.TaskId);
 
@@ -38,13 +38,13 @@ public class TaskDbContext : DbContext
 
         // TaskItem -> Comments relationship
         modelBuilder.Entity<Comment>()
-            .HasOne(c => c.Task)
+            .HasOne(c => c.TaskItem)
             .WithMany(t => t.Comments)
             .HasForeignKey(c => c.TaskId);
 
         // TaskItem -> UserTaskHistory relationship
         modelBuilder.Entity<UserTaskHistory>()
-            .HasOne(uth => uth.Task)
+            .HasOne(uth => uth.TaskItem)
             .WithMany(t => t.UserTaskHistories)
             .HasForeignKey(uth => uth.TaskId);
 

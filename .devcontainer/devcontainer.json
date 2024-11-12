@@ -1,11 +1,7 @@
 {
-  "image": "mcr.microsoft.com/devcontainers/universal:2",
-  "features": {
-  },
-  {
   "name": "My Codespace",
   "image": "mcr.microsoft.com/devcontainers/dotnet",
-  "postCreateCommand": "sudo apt update && sudo apt install -y postgresql && sudo service postgresql start && sudo -u postgres psql -c \"CREATE DATABASE taskdb;\" && sudo -u postgres psql -c \"CREATE USER postgres WITH PASSWORD 'admin';\" && sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE taskdb TO postgres;\""
+  "postCreateCommand": "sudo apt update && sudo apt install -y postgresql"
  }
 
-}
+

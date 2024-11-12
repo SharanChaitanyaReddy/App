@@ -5,7 +5,7 @@ public class UserTaskHistory
     [Key]
     public int Id { get; set; }
     public int TaskId { get; set; }
-    public TaskItem? Task { get; set; }
+    public TaskItem? TaskItem { get; set; }
     public int UserId { get; set; }
     public User? User { get; set; }
     public TaskStatus OldStatus { get; set; }
