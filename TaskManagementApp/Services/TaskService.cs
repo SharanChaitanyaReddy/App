@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TaskManagementApp.Models;
-public class TaskService
+public class TaskService : ITaskService
 {
  private readonly TaskRepository _taskRepository;
 
@@ -10,30 +10,31 @@ public class TaskService
         _taskRepository = taskRepository;
     }
 
-    public async Task<TaskItem> CreateTaskAsync(string title, string description, TaskPriority priority, DateTime dueDate)
+   public async Task<TaskItem> GetTaskByIdAsync(int id)
     {
-        var task = new TaskItem
-        {
-            Title = title,
-            Description = description,
-            Priority = priority,
-            Status = TaskStatus.ToDo,
-            DueDate = dueDate,
-            SubTasks = new List<SubTask>(),
-            Comments = new List<Comment>()
-        };
-        
-        return await _taskRepository.CreateTaskAsync(task);
+        return await _taskRepository.GetByIdAsync(id);
     }
-    
-    public async System.Threading.Tasks.Task AddCommentAsync(int taskId, string content, int userId)
+
+    public async Task<IEnumerable<TaskItem>> GetAllTasksAsync()
     {
-         await _taskRepository.AddCommentAsync(taskId, content, userId);
+        return await _taskRepository.GetAllAsync();
     }
-    
-    public async System.Threading.Tasks.Task UpdateTaskStatusAsync(int taskId, TaskStatus newStatus, int userId)
+
+    public async Task CreateTaskAsync(TaskItem task)
     {
-        await _taskRepository.UpdateTaskStatusAsync(taskId, newStatus, userId);
+        // Additional business logic can be applied here
+        await _taskRepository.AddAsync(task);
+    }
+
+    public async Task UpdateTaskAsync(TaskItem task)
+    {
+        // Additional validation or logic
+        await _taskRepository.UpdateAsync(task);
+    }
+
+    public async Task DeleteTaskAsync(int id)
+    {
+        await _taskRepository.DeleteAsync(id);
     }
 
 

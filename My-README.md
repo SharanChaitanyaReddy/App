@@ -17,6 +17,7 @@ Workflow Management
 Define workflows for tasks, allowing customizable status transitions.
 Support moving tasks through defined statuses based on role permissions (e.g., “Developer” can move a task to “In Review”).
 Create and maintain workflow templates for reuse across projects.
+
 2. User Collaboration Features
 Commenting
 Add comments to tasks for discussions, status updates, or instructions.

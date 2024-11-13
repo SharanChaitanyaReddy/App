@@ -17,13 +17,13 @@ public class HomeController : Controller
         _taskService = taskService;
     }
 
-    public IActionResult Index(int pageNumber = 1, int pageSize = 10)
+    public  IActionResult Index(int pageNumber = 1, int pageSize = 10)
     {
-        var tasks = _taskService.GetAllTasks()
-        .Skip((pageNumber -1) * pageSize)
+        IEnumerable<TaskItem> tasks = (IEnumerable<TaskItem>)_taskService.GetAllTasksAsync();
+        var ret = tasks.Skip((pageNumber -1) * pageSize)
         .Take(pageSize).ToList();
 
-        return View(tasks);
+        return View(ret);
     }
 
     public IActionResult Privacy()

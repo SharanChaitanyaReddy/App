@@ -1,3 +1,5 @@
+using TaskManagementApp.Models;
+
 public class TaskExpiryService
 {
     private readonly ITaskService _taskService;
@@ -16,11 +18,12 @@ public class TaskExpiryService
 
     private void CheckForExpiredTasks(object? state)
     {
-        var expiredTasks = _taskService.GetAllTasks().Where(t => t.ExpiryDate < DateTime.Now).ToList();
+        var Tasks = (IEnumerable<TaskItem>)_taskService.GetAllTasksAsync();
+        var expiredTasks = Tasks.Where(t => t.ExpiryDate < DateTime.Now).ToList();
 
         foreach(var task in expiredTasks){
             task.Status = TaskStatus.Done;
-            _taskService.UpdateTask(task);
+            _taskService.UpdateTaskAsync(task);
         }
     }
 
