@@ -3,9 +3,9 @@ using TaskManagementApp.Models;
 
 public interface ITaskService
 {
-    List<TaskItem> GetAllTasks();
-    Task GetTaskById(int id);
-    void AddTask(TaskItem task);
-    void UpdateTask(TaskItem task);
-    void DeleteTask(int id);
+    Task<TaskItem> GetTaskByIdAsync(int id);
+    Task<IEnumerable<TaskItem>> GetAllTasksAsync();
+    Task CreateTaskAsync(TaskItem task);
+    Task UpdateTaskAsync(TaskItem task);
+    Task DeleteTaskAsync(int id);
 }

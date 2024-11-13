@@ -8,7 +8,7 @@ public class TaskProcessor{
     }
 
     public async System.Threading.Tasks.Task ProcessTaskAsync(){
-        var tasks = _taskService.GetAllTasks();
+        IEnumerable<TaskItem> tasks = (IEnumerable<TaskItem>)_taskService.GetAllTasksAsync();
 
        // Gather high priority tasks
         var highPriorityTasks  = tasks.Where(t => t.Priority == TaskPriority.High).ToList();

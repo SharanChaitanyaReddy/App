@@ -7,25 +7,28 @@ using TaskManagementApp.Models;
 [ApiController]
 public class TaskApiController : ControllerBase
 {
-    private readonly ITaskService _taskService;
+   private readonly ITaskService _taskService;
 
     public TaskApiController(ITaskService taskService)
     {
         _taskService = taskService;
     }
 
-    [HttpGet]
-    public IActionResult GetAllTasks() => Ok(_taskService.GetAllTasks());
-
     [HttpGet("{id}")]
-    public IActionResult GetTaskById(int id) => Ok(_taskService.GetTaskById(id));
+    public async Task<IActionResult> GetTask(int id)
+    {
+        var task = await _taskService.GetTaskByIdAsync(id);
+        if (task == null)
+        {
+            return NotFound();
+        }
+        return Ok(task);
+    }
 
     [HttpPost]
-    public IActionResult AddTask(TaskItem task) { _taskService.AddTask(task); return CreatedAtAction(nameof(GetTaskById), new { id = task.Id }, task); }
-
-    [HttpPut("{id}")]
-    public IActionResult UpdateTask(int id, TaskItem task) { task.Id = id; _taskService.UpdateTask(task); return NoContent(); }
-
-    [HttpDelete("{id}")]
-    public IActionResult DeleteTask(int id) { _taskService.DeleteTask(id); return NoContent(); }
+    public async Task<IActionResult> CreateTask(TaskItem task)
+    {
+        await _taskService.CreateTaskAsync(task);
+        return CreatedAtAction(nameof(GetTask), new { id = task.Id }, task);
+    }
 }
