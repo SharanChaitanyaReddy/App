@@ -1,15 +1,14 @@
-using System.Collections.Generic;
-using Xunit;
 using Moq;
-using Microsoft.Extensions.DependencyInjection;
-using TaskManagementApp;
-using  TaskManagementApp.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using TaskManagementApp.Models;
+using Xunit;
 
-namespace TaskManagementApp.Tests.Services{
-
+namespace TaskManagementApp.Tests.Services
+{
     public class SubTaskServiceTests
     {
-        private readonly ServiceProvider _serviceProvider;
         private readonly Mock<ISubTaskRepository> _subTaskRepositoryMock;
         private readonly SubTaskService _subTaskService;
 
@@ -17,29 +16,84 @@ namespace TaskManagementApp.Tests.Services{
         {
             _subTaskRepositoryMock = new Mock<ISubTaskRepository>();
             _subTaskService = new SubTaskService(_subTaskRepositoryMock.Object);
-
-            // Set up DI container
-            var services = new ServiceCollection();
-
-            // Mock dependencies
-            _subTaskRepositoryMock = new Mock<ISubTaskRepository>();
-            
-            // Register mock services with the DI container
-            services.AddSingleton<ISubTaskRepository>(_subTaskRepositoryMock.Object);
-            
-
-            _serviceProvider = services.BuildServiceProvider();
-
-            // Resolve TaskController with dependencies from DI container
-            _subTaskService = new SubTaskService(_serviceProvider.GetService<ISubTaskRepository>());
         }
 
         [Fact]
-        public async Task CreateSubTaskAsync_ShouldCreateSubTask()
+        public async Task GetSubTaskByIdAsync_ReturnsSubTask_WhenSubTaskExists()
         {
             // Arrange
-            var subTask = new SubTask { Title = "New SubTask", TaskItemId = 1 };
-            _subTaskRepositoryMock.Setup(repo => repo.AddAsync(subTask)).Returns(Task.CompletedTask);
+            var subTaskId = 1;
+            var subTask = new SubTask { Id = subTaskId, Title = "Updated SubTask", ParentTaskId = 1, ParentTask = new TaskItem{Id=1, Title="Title", Description="Description"} };
+            _subTaskRepositoryMock.Setup(repo => repo.GetByIdAsync(subTaskId))
+                                  .ReturnsAsync(subTask);
+
+            // Act
+            var result = await _subTaskService.GetSubTaskByIdAsync(subTaskId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(subTaskId, result.Id);
+            Assert.Equal("Sample SubTask", result.Title);
+        }
+
+        [Fact]
+        public async Task GetSubTaskByIdAsync_ReturnsNull_WhenSubTaskDoesNotExist()
+        {
+            // Arrange
+            var subTaskId = 2;
+            _subTaskRepositoryMock.Setup(repo => repo.GetByIdAsync(subTaskId))
+                                  .ReturnsAsync((SubTask)null);
+
+            // Act
+            var result = await _subTaskService.GetSubTaskByIdAsync(subTaskId);
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetSubTasksByTaskIdAsync_ReturnsSubTasks_WhenSubTasksExist()
+        {
+            // Arrange
+            var taskId = 1;
+            var subTasks = new List<SubTask>
+            {
+                new SubTask { Id = 4, Title = "Updated SubTask", ParentTaskId = 1, ParentTask = new TaskItem{Id=1, Title="Title", Description="Description"} },
+                new SubTask { Id = 4, Title = "Updated SubTask", ParentTaskId = 1, ParentTask = new TaskItem{Id=1, Title="Title", Description="Description"} }
+            };
+            _subTaskRepositoryMock.Setup(repo => repo.GetAllByTaskIdAsync(taskId))
+                                  .ReturnsAsync(subTasks);
+
+            // Act
+            var result = await _subTaskService.GetSubTasksByTaskIdAsync(taskId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count());
+            Assert.All(result, t => Assert.Equal(taskId, t.ParentTaskId));
+        }
+
+        [Fact]
+        public async Task GetSubTasksByTaskIdAsync_ReturnsEmptyList_WhenNoSubTasksExist()
+        {
+            // Arrange
+            var taskId = 1;
+            _subTaskRepositoryMock.Setup(repo => repo.GetAllByTaskIdAsync(taskId))
+                                  .ReturnsAsync(new List<SubTask>());
+
+            // Act
+            var result = await _subTaskService.GetSubTasksByTaskIdAsync(taskId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public async Task CreateSubTaskAsync_CallsRepositoryAddAsync()
+        {
+            // Arrange
+            var subTask = new SubTask { Id = 3, Title = "Updated SubTask", ParentTask = new TaskItem{Id=1, Title="Title", Description="Description"} };
 
             // Act
             await _subTaskService.CreateSubTaskAsync(subTask);
@@ -49,20 +103,29 @@ namespace TaskManagementApp.Tests.Services{
         }
 
         [Fact]
-        public async Task GetSubTasksByTaskIdAsync_ShouldReturnSubTasksForTask()
+        public async Task UpdateSubTaskAsync_CallsRepositoryUpdateAsync()
         {
             // Arrange
-            var taskId = 1;
-            var subTasks = new IEnumerable<SubTask> { new SubTask { Title = "SubTask 1", ParentTaskId = taskId, ParentTask = new TaskItem{ Title= "task Item", Description = "Hello"  } } };
-            _subTaskRepositoryMock.Setup(repo => repo.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(new List<SubTask> { new SubTask { Title = "SubTask 1", ParentTaskId = taskId, ParentTask = new TaskItem{ Title= "task Item", Description = "Hello"  } } });
+            var subTask = new SubTask { Id = 4, Title = "Updated SubTask", ParentTask = new TaskItem{Id=1, Title="Title", Description="Description"} };
 
             // Act
-            var result = await _subTaskService.GetSubTasksByTaskIdAsync(taskId);
+            await _subTaskService.UpdateSubTaskAsync(subTask);
 
             // Assert
-            Assert.Equal(subTasks.Count(), result.Count());
-            Assert.Equal("SubTask 1", result.First().Title);
+            _subTaskRepositoryMock.Verify(repo => repo.UpdateAsync(subTask), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteSubTaskAsync_CallsRepositoryDeleteAsync()
+        {
+            // Arrange
+            var subTaskId = 5;
+
+            // Act
+            await _subTaskService.DeleteSubTaskAsync(subTaskId);
+
+            // Assert
+            _subTaskRepositoryMock.Verify(repo => repo.DeleteAsync(subTaskId), Times.Once);
         }
     }
-
 }

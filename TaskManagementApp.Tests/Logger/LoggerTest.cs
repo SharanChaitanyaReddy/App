@@ -1,43 +1,83 @@
-using System.Collections.Generic;
+using System;
+using Microsoft.Extensions.Logging;
 using Xunit;
-using Moq;
-using TaskManagementApp;
-public class CustomLoggerTests
+
+public class ConsoleLoggerTests
 {
-    private readonly ConsoleLogger _logger;
-
-    public CustomLoggerTests()
+    [Fact]
+    public void IsEnabled_AlwaysReturnsTrue()
     {
-        var loggerProvider = new ConsoleLoggerProvider();
-        _logger = new ConsoleLogger("TestCategory", loggerProvider);
+        // Arrange
+        var logger = new ConsoleLogger("TestCategory");
+
+        // Act
+        var isEnabled = logger.IsEnabled(LogLevel.Information);
+
+        // Assert
+        Assert.True(isEnabled);
     }
 
     [Fact]
-    public void LogInformation_ShouldLogMessage()
+    public void Log_WritesFormattedMessageToConsole()
     {
         // Arrange
-        var message = "Test info message";
+        var logger = new ConsoleLogger("TestCategory");
+        var logLevel = LogLevel.Information;
+        var eventId = new EventId(1, "TestEvent");
+        string expectedMessage = "Information: - This is a test log message.";
 
+        // Capture console output
+        using var consoleOutput = new ConsoleOutputCapture();
+        
         // Act
-        _logger.LogInformation(message);
+        logger.Log(logLevel, eventId, "This is a test log message.", null, (state, ex) => state.ToString());
 
         // Assert
-        var logs = _logger.GetLogs();  // Assuming your CustomLogger has GetLogs for testing
-        Assert.Contains(message, logs);
+        Assert.Contains(expectedMessage, consoleOutput.GetOutput());
     }
 
     [Fact]
-    public void LogError_ShouldLogException()
+    public void Log_IncludesExceptionMessage_WhenExceptionIsNotNull()
     {
         // Arrange
-        var exception = new Exception("Test exception");
+        var logger = new ConsoleLogger("TestCategory");
+        var logLevel = LogLevel.Error;
+        var eventId = new EventId(1, "TestEvent");
+        var exception = new InvalidOperationException("Test exception");
+        string expectedMessage = "Error: - Log with exception Test exception";
+
+        // Capture console output
+        using var consoleOutput = new ConsoleOutputCapture();
 
         // Act
-        _logger.LogError(exception, "An error occurred");
+        logger.Log(logLevel, eventId, "Log with exception", exception, (state, ex) => $"{state} {ex?.Message}");
 
         // Assert
-        var logs = _logger.GetLogs();  // Replace with actual log retrieval logic
-        Assert.Contains("An error occurred", logs);
-        Assert.Contains("Test exception", logs);
+        Assert.Contains(expectedMessage, consoleOutput.GetOutput());
+    }
+}
+
+// Helper class to capture console output
+public class ConsoleOutputCapture : IDisposable
+{
+    private readonly System.IO.StringWriter _stringWriter;
+    private readonly System.IO.TextWriter _originalOutput;
+
+    public ConsoleOutputCapture()
+    {
+        _stringWriter = new System.IO.StringWriter();
+        _originalOutput = Console.Out;
+        Console.SetOut(_stringWriter);
+    }
+
+    public string GetOutput()
+    {
+        return _stringWriter.ToString();
+    }
+
+    public void Dispose()
+    {
+        Console.SetOut(_originalOutput);
+        _stringWriter.Dispose();
     }
 }
